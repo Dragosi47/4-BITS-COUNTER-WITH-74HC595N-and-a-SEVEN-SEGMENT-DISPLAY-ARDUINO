@@ -1,0 +1,91 @@
+int pin1 = 6;
+int pin2 = 5;
+int pin4 = 4;
+int pin6 = 3;
+int pin7 = 2;
+int pin9 = 7;
+int pin10 = 8;
+
+int latchPin = 11;
+int clockPin = 9;
+int dataPin = 12;
+
+byte LEDs = 0x00;
+
+
+int Delay = 1000;
+
+
+int v[16][7] = {
+                { 1,1,1,1,1,1,0 },  
+                { 0,1,1,0,0,0,0 }, 
+                { 1,1,0,1,1,0,1 },  
+                { 1,1,1,1,0,0,1 },   
+                { 0,1,1,0,0,1,1 },    
+                { 1,0,1,1,0,1,1 },    
+                { 1,0,1,1,1,1,1 },    
+                { 1,1,1,0,0,0,0 },   
+                { 1,1,1,1,1,1,1 },    
+                { 1,1,1,1,0,1,1 },
+                {1 , 1 , 1 , 0 , 1 , 1 , 1},
+                {0 , 0 , 1 , 1 , 1 , 1 , 1},
+                {1 , 0 , 0 , 1 , 1 , 1 , 0},
+                {0 , 1 , 1 , 1 , 1 , 0 , 1},
+                {1 , 0 , 0 , 1 , 1 , 1 , 1},
+                {1 , 0 , 0 , 0 , 1 , 1 , 1}};  
+
+void Number_write(int);
+
+
+void setup() {
+  // put your setup code here, to run once:
+  pinMode(pin1 , OUTPUT);
+  pinMode(pin2 , OUTPUT);
+  pinMode(pin4 , OUTPUT);
+  pinMode(pin6 , OUTPUT);
+  pinMode(pin7 , OUTPUT);
+  pinMode(pin9 , OUTPUT);
+  pinMode(pin10 , OUTPUT);
+
+  pinMode(latchPin , OUTPUT);
+  pinMode(dataPin ,OUTPUT);
+  pinMode(clockPin , OUTPUT);
+  Serial.begin(9600);
+}
+
+
+void loop() {
+  // put your main code here, to run repeatedly:
+
+  for(int counter = 0 ; counter < 17 ; counter +=1) 
+  {
+  delay(1000);
+  Number_write(counter + 1);
+  LedsHIGH(counter + 1);
+  }
+  delay(3000);
+}
+
+void Number_write(int number)
+{
+  int pin = 2;
+  for(int i = 0 ; i < 7 ; i++)
+  {
+    digitalWrite(pin , v[number][i]);
+    pin++;
+  }
+  for(int i = 0 ; i < 7 ; i++)
+  {
+    digitalWrite(v[number][i] , LOW);
+  }
+  delay(100);
+}
+
+void LedsHIGH(int LEDs)
+{
+  digitalWrite(latchPin , LOW);
+  shiftOut(dataPin , clockPin , LSBFIRST , LEDs);
+  digitalWrite(latchPin , HIGH);
+  delay(Delay);
+  Serial.println(LEDs);
+}
